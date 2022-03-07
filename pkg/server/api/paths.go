@@ -6,5 +6,9 @@ const (
 	MetadataRoute = "/metadata"
 
 	// "/metadata/{id}"
-	MetadataByIdRoute = MetadataRoute + "/:id"
+	MetadataByIdRoute = MetadataRoute + "/:" + ParameterID
+)
+
+const (
+	ParameterID = "id"
 )
