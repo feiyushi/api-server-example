@@ -32,12 +32,13 @@ func (mm *MetadataManager) PutMetadataHandler(c *gin.Context) {
 	}
 	logger.Infof("metadata id: %s", id)
 
-	if err := mm.Store.SetMetadata(id, &payload); err != nil {
+	if err := mm.Store.SetMetadata(id, payload.Data); err != nil {
 		logger.Errorf("store SetMetadata error: %v", err)
 		// 500
 		c.YAML(http.StatusInternalServerError, api.NewErrorResponse(api.InternalServerError, "Cannot save metadata"))
 		return
 	}
+	payload.ID = id
 	// 201
 	c.YAML(http.StatusCreated, payload)
 }
@@ -60,7 +61,7 @@ func (mm *MetadataManager) GetMetadataHandler(c *gin.Context) {
 	}
 	// 200
 	if md != nil {
-		c.YAML(http.StatusOK, md)
+		c.YAML(http.StatusOK, api.NewPayload(id, md))
 		return
 	}
 	// 404
