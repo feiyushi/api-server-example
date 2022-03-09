@@ -85,5 +85,23 @@ func (mm *MetadataManager) GetMetadataHandler(c *gin.Context) {
 }
 
 func (mm *MetadataManager) ListMetadataHandler(c *gin.Context) {
+	logger := mm.Logger.Sugar()
+	company := c.DefaultQuery(api.QueryCompany, "")
+	if company == "" {
+		err := errors.New("Only supports searching metadata by company name")
+		logger.Error(err)
+		// 400
+		c.YAML(http.StatusBadRequest, api.NewErrorResponse(api.NotSupported, err.Error()))
+		return
+	}
 
+	md, err := mm.Store.ListMedatadaByCompany(company)
+	// 500
+	if err != nil {
+		logger.Errorf("store ListMedatadaByCompany error: %v", err)
+		c.YAML(http.StatusInternalServerError, api.NewErrorResponse(api.InternalServerError, "Cannot list metadata"))
+		return
+	}
+
+	c.YAML(http.StatusOK, md)
 }

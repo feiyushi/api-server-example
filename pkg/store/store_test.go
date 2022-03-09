@@ -27,12 +27,12 @@ var _ = Describe("Store", func() {
 	})
 	It("can list metadata matched by company name", func() {
 		// save 3 metadata
-		md1 := &model.Metadata{Title: "app1", Company: "msft"}
-		md2 := &model.Metadata{Title: "app2", Company: "msft"}
-		md3 := &model.Metadata{Title: "app3", Company: "google"}
-		Expect(store.SetMetadata("id1", md1)).To(Succeed())
-		Expect(store.SetMetadata("id2", md2)).To(Succeed())
-		Expect(store.SetMetadata("id3", md3)).To(Succeed())
+		md1 := model.NewMetadataWithID("id1", &model.Metadata{Title: "app1", Company: "msft"})
+		md2 := model.NewMetadataWithID("id2", &model.Metadata{Title: "app2", Company: "msft"})
+		md3 := model.NewMetadataWithID("id3", &model.Metadata{Title: "app3", Company: "google"})
+		Expect(store.SetMetadata("id1", md1.Data)).To(Succeed())
+		Expect(store.SetMetadata("id2", md2.Data)).To(Succeed())
+		Expect(store.SetMetadata("id3", md3.Data)).To(Succeed())
 		// list by company msft
 		list, err := (store.ListMedatadaByCompany("msft"))
 		Expect(err).To((BeNil()))

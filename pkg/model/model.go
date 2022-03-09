@@ -11,6 +11,18 @@ import (
 
 var emailPattern = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
+type MetadataWithID struct {
+	ID   string    `yaml:"id"`
+	Data *Metadata `yaml:"metadata" binding:"required"`
+}
+
+func NewMetadataWithID(id string, data *Metadata) *MetadataWithID {
+	return &MetadataWithID{
+		ID:   id,
+		Data: data,
+	}
+}
+
 type Metadata struct {
 	Title       string       `yaml:"title"`
 	Version     string       `yaml:"version"`

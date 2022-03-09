@@ -12,3 +12,7 @@ const (
 const (
 	ParameterID = "id"
 )
+
+const (
+	QueryCompany = "company"
+)

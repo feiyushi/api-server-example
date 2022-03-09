@@ -10,7 +10,7 @@ import (
 type MetadataStore interface {
 	SetMetadata(id string, metadata *model.Metadata) error
 	GetMetadata(id string) (*model.Metadata, error)
-	ListMedatadaByCompany(company string) ([]*model.Metadata, error)
+	ListMedatadaByCompany(company string) ([]*model.MetadataWithID, error)
 }
 
 // InMemoryMetadataStore implements MetadataStore interface and stores data in memory
@@ -51,13 +51,13 @@ func (ms *InMemoryMetadataStore) GetMetadata(id string) (*model.Metadata, error)
 
 // ListMedatadaByCompany list metadata that matches company name in InMemoryMetadataStore
 // if not found, return empty slice
-func (ms *InMemoryMetadataStore) ListMedatadaByCompany(company string) ([]*model.Metadata, error) {
+func (ms *InMemoryMetadataStore) ListMedatadaByCompany(company string) ([]*model.MetadataWithID, error) {
 	ms.mutex.RLock()
 	defer ms.mutex.RUnlock()
-	var result []*model.Metadata
-	for _, data := range ms.metadata {
+	var result []*model.MetadataWithID
+	for id, data := range ms.metadata {
 		if strings.EqualFold(data.Company, company) {
-			result = append(result, data)
+			result = append(result, model.NewMetadataWithID(id, data))
 		}
 	}
 	return result, nil
