@@ -12,10 +12,12 @@ import (
 )
 
 func main() {
-	setUpRouter()
+	router := setUpRouter()
+	// listen on 8080 port
+	router.Run(":8080")
 }
 
-func setUpRouter() {
+func setUpRouter() *gin.Engine {
 	router := gin.New()
 	logger, _ := zap.NewProduction()
 
@@ -34,6 +36,5 @@ func setUpRouter() {
 	// List metadata
 	router.GET(api.MetadataRoute, metadataManager.ListMetadataHandler)
 
-	// listen on 8080 port
-	router.Run(":8080")
+	return router
 }
