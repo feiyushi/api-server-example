@@ -3,6 +3,8 @@ package handlers
 import (
 	"apiserver/pkg/server/api"
 	"apiserver/pkg/store"
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,11 +28,22 @@ func (mm *MetadataManager) PutMetadataHandler(c *gin.Context) {
 
 	id := c.Param(api.ParameterID)
 	if id == "" {
+		err := errors.New("Missing metadata id")
+		logger.Error(err)
 		// 400
-		c.YAML(http.StatusBadRequest, api.NewErrorResponse(api.BadRequest, "Missing metadata id"))
+		c.YAML(http.StatusBadRequest, api.NewErrorResponse(api.BadRequest, err.Error()))
 		return
 	}
 	logger.Infof("metadata id: %s", id)
+
+	// validate YAML payload
+	if err := payload.Data.Validate(); err != nil {
+		err = fmt.Errorf("Invalid YAML payload: %v", err)
+		logger.Error(err)
+		// 400
+		c.YAML(http.StatusBadRequest, api.NewErrorResponse(api.BadRequest, err.Error()))
+		return
+	}
 
 	if err := mm.Store.SetMetadata(id, payload.Data); err != nil {
 		logger.Errorf("store SetMetadata error: %v", err)
@@ -47,8 +60,10 @@ func (mm *MetadataManager) GetMetadataHandler(c *gin.Context) {
 	logger := mm.Logger.Sugar()
 	id := c.Param(api.ParameterID)
 	if id == "" {
+		err := errors.New("Missing metadata id")
+		logger.Error(err)
 		// 400
-		c.YAML(http.StatusBadRequest, api.NewErrorResponse(api.BadRequest, "Missing metadata id"))
+		c.YAML(http.StatusBadRequest, api.NewErrorResponse(api.BadRequest, err.Error()))
 		return
 	}
 	logger.Infof("metadata id: %s", id)
@@ -56,6 +71,7 @@ func (mm *MetadataManager) GetMetadataHandler(c *gin.Context) {
 	md, err := mm.Store.GetMetadata(id)
 	// 500
 	if err != nil {
+		logger.Errorf("store GetMetadata error: %v", err)
 		c.YAML(http.StatusInternalServerError, api.NewErrorResponse(api.InternalServerError, "Cannot get metadata"))
 		return
 	}
