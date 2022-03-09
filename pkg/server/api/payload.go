@@ -7,7 +7,7 @@ import "apiserver/pkg/model"
 // Otherwise as API can change over time, conversion is needed between payload contract and core model
 type Payload struct {
 	ID   string          `yaml:"id"`
-	Data *model.Metadata `yaml:"metadata"`
+	Data *model.Metadata `yaml:"metadata" binding:"required"`
 }
 
 func NewPayload(id string, data *model.Metadata) *Payload {
