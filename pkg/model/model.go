@@ -35,6 +35,11 @@ func (md *Metadata) Validate() error {
 	if len(md.Maintainers) == 0 {
 		return errors.New("missing field 'maintainers'")
 	}
+	for _, m := range md.Maintainers {
+		if err := m.Validate(); err != nil {
+			return err
+		}
+	}
 	if md.Company == "" {
 		return errors.New("missing field 'company'")
 	}
